@@ -51,37 +51,6 @@ PRODUCT_COPY_FILES += \
     device/motorola/edison/root/ueventd.mapphone_cdma.rc:/root/ueventd.mapphone_cdma.rc \
     device/motorola/edison/root/ueventd.mapphone_umts.rc:/root/ueventd.mapphone_umts.rc
 
-# Kexec files and ti ducati or rootfs files
-ifeq ($(BOARD_USES_KEXEC),true)
-ifeq ($(TARGET_PRODUCT),full_edison)
-PRODUCT_COPY_FILES += device/motorola/common/prebuilt/etc/rootfs/init:root/init
-endif
-PRODUCT_COPY_FILES += \
-    device/motorola/edison/kexec/arm_kexec.ko:system/etc/kexec/arm_kexec.ko \
-    device/motorola/edison/kexec/atags:system/etc/kexec/atags \
-    device/motorola/edison/kexec/devtree:system/etc/kexec/devtree \
-    device/motorola/edison/kexec/kexec:system/etc/kexec/kexec \
-    device/motorola/edison/kexec/kexec.ko:system/etc/kexec/kexec.ko \
-    device/motorola/edison/kexec/uart.ko:system/etc/kexec/uart.ko \
-    out/target/product/edison/ramdisk.img:system/etc/kexec/ramdisk.img \
-    out/target/product/edison/kernel:system/etc/kexec/kernel
-else
-ifeq ($(TARGET_PRODUCT),full_edison)
-PRODUCT_COPY_FILES += device/motorola/common/prebuilt/etc/rootfs/init:system/etc/rootfs/init
-else
-PRODUCT_COPY_FILES += out/target/product/edison/root/init:system/etc/rootfs/init
-endif
-PRODUCT_COPY_FILES += \
-    device/motorola/edison/root/default.prop:/system/etc/rootfs/default.prop \
-    device/motorola/edison/root/init.rc:/root/init.rc \
-    device/motorola/edison/root/init.mapphone_cdma.rc:/system/etc/rootfs/init.mapphone_cdma.rc \
-    device/motorola/edison/root/init.mapphone_umts.rc:/system/etc/rootfs/init.mapphone_umts.rc \
-    device/motorola/edison/root/ueventd.rc:/system/etc/rootfs/ueventd.rc \
-    device/motorola/edison/root/ueventd.mapphone_cdma.rc:/system/etc/rootfs/ueventd.mapphone_cdma.rc \
-    device/motorola/edison/root/ueventd.mapphone_umts.rc:/system/etc/rootfs/ueventd.mapphone_umts.rc \
-    out/target/product/edison/root/sbin/adbd:system/etc/rootfs/sbin/adbd
-endif
-
 # Prebuilts
 PRODUCT_COPY_FILES += \
     device/motorola/edison/prebuilt/bin/battd:system/bin/battd \
