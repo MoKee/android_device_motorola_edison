@@ -30,8 +30,8 @@ PRODUCT_COPY_FILES += \
     device/motorola/edison/audio/libaudio_ext.so:/system/lib/libaudio_ext.so
 
 # Hardware HALs
-PRODUCT_PACKAGES += \
-    hwcomposer.edison
+# PRODUCT_PACKAGES += \
+#    hwcomposer.edison
 
 # Modem
 PRODUCT_PACKAGES += \
