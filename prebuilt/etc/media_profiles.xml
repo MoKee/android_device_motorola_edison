@@ -66,10 +66,10 @@
 <!ATTLIST AudioEncoderCap minChannels (1|2) #REQUIRED>
 <!ATTLIST AudioEncoderCap maxChannels (1|2) #REQUIRED>
 <!ELEMENT VideoDecoderCap EMPTY>
-<!ATTLIST VideoDecoderCap name (wmv) #REQUIRED>
+<!ATTLIST VideoDecoderCap name (wmv|rmvb|rm) #REQUIRED>
 <!ATTLIST VideoDecoderCap enabled (true|false) #REQUIRED>
 <!ELEMENT AudioDecoderCap EMPTY>
-<!ATTLIST AudioDecoderCap name (wma|qcp|evrc) #REQUIRED>
+<!ATTLIST AudioDecoderCap name (wma|qcp|evrc|ra) #REQUIRED>
 <!ATTLIST AudioDecoderCap enabled (true|false) #REQUIRED>
 <!ELEMENT VideoEditorCap EMPTY>
 <!ATTLIST VideoEditorCap maxInputFrameWidth CDATA #REQUIRED>
@@ -198,6 +198,33 @@
                     channels="2" />
          </EncoderProfile>
 
+        <EncoderProfile quality="mms" fileFormat="3gp" duration="30">
+             <Video codec="h264"
+                    bitRate="128000"
+                    width="320"
+                    height="240"
+                    frameRate="15" />
+
+             <Audio codec="amrnb"
+                    bitRate="12200"
+                    sampleRate="8000"
+                    channels="1" />
+        </EncoderProfile>
+
+        <EncoderProfile quality="720p60" fileFormat="mp4" duration="60">
+            <Video codec="h264"
+                   bitRate="10000000"
+                   width="1280"
+                   height="720"
+                   frameRate="60" />
+
+            <Audio codec="aac"
+                   bitRate="128000"
+                   sampleRate="44100"
+                   channels="2" />
+
+        </EncoderProfile>
+
         <EncoderProfile quality="timelapsehigh" fileFormat="mp4" duration="60">
             <Video codec="h264"
                    bitRate="15000000"
@@ -266,6 +293,19 @@
                     channels="2" />
          </EncoderProfile>
 
+        <EncoderProfile quality="timelapsevga" fileFormat="mp4" duration="30">
+             <Video codec="h264"
+                    bitRate="4000000"
+                    width="640"
+                    height="480"
+                    frameRate="30" />
+
+             <Audio codec="aac"
+                    bitRate="128000"
+                    sampleRate="44100"
+                    channels="2" />
+         </EncoderProfile>
+
         <EncoderProfile quality="timelapsecif" fileFormat="mp4" duration="30">
              <Video codec="h264"
                     bitRate="1500000"
@@ -323,7 +363,7 @@
                     bitRate="500000"
                     width="320"
                     height="240"
-                    frameRate="15" />
+                    frameRate="30" />
 
              <Audio codec="aac"
                     bitRate="64000"
@@ -390,7 +430,7 @@
                     bitRate="500000"
                     width="320"
                     height="240"
-                    frameRate="15" />
+                    frameRate="30" />
 
              <Audio codec="aac"
                     bitRate="64000"
@@ -471,7 +511,7 @@
                     bitRate="500000"
                     width="320"
                     height="240"
-                    frameRate="15" />
+                    frameRate="30" />
 
              <Audio codec="aac"
                     bitRate="64000"
@@ -533,8 +573,11 @@
     -->
     <VideoDecoderCap name="wmv" enabled="true"/>
     <AudioDecoderCap name="wma" enabled="true"/>
-    <AudioDecoderCap name="qcp" enabled="false"/>
-    <AudioDecoderCap name="evrc" enabled="false"/>
+    <AudioDecoderCap name="qcp" enabled="true"/>
+    <AudioDecoderCap name="evrc" enabled="true"/>
+    <VideoDecoderCap name="rmvb" enabled="true"/>
+    <VideoDecoderCap name="rm" enabled="true"/>
+    <AudioDecoderCap name="ra" enabled="true"/>
     <VideoEditorCap  maxInputFrameWidth="1920"
         maxInputFrameHeight="1080" maxOutputFrameWidth="1920"
         maxOutputFrameHeight="1080" maxPrefetchYUVFrames="10"/>
