@@ -504,10 +504,10 @@
                     bitRate="128000"
                     sampleRate="44100"
                     channels="2" />
-         </EncoderProfile>
+        </EncoderProfile>
 
-        <EncoderProfile quality="timelapseqvga" fileFormat="mp4" duration="30">
-             <Video codec="h264"
+       <EncoderProfile quality="timelapseqvga" fileFormat="mp4" duration="30">
+            <Video codec="h264"
                     bitRate="500000"
                     width="320"
                     height="240"
@@ -517,7 +517,7 @@
                     bitRate="64000"
                     sampleRate="44100"
                     channels="2" />
-         </EncoderProfile>
+       </EncoderProfile>
 
         <ImageEncoding quality="95" />
         <ImageEncoding quality="80" />

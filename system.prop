@@ -1,12 +1,11 @@
 #
 # system.prop for Edison
 #
-
 rild.libpath=/system/lib/libu300-ril.so
 rild.libargs=-c CAIF -i rmnet
 ro.sf.lcd_density=240
 ro.mot.ril.danlist=611,*611,#611
-persist.ril.ecclist=911,*911,#911
+persist.ril.ecclist=911,*911,#911,119,118,999,08,000,112,110
 persist.ril.modem.mode =1
 # This defines the max event window manager can
 # handle in 1 s. We may adjust this # for performance
@@ -19,17 +18,19 @@ ro.modem_available=0
 
 # wlan interface
 wifi.interface = wlan0
-softap.interface = wlan0
-wifi.ap.interface = wlan0
+softap.interface = wlan1
 
 # Time between scans in seconds. Keep it high to minimize battery drain.
 # This only affects the case in which there are remembered access points,
 # but none are in range.
-wifi.supplicant_scan_interval = 45
+wifi.supplicant_scan_interval = 90
 
 # The OpenGL ES API level that is natively supported by this device.
 # This is a 16.16 fixed point number
 ro.opengles.version = 131072
+
+# This is a high density device with more memory, so larger vm heaps for it.
+dalvik.vm.heapsize=42m
 
 # our HTML browser (not WAP browser ) does not need to specify UAProf URL - IKEDISON-1005
 ro.mot.hw.uaprof=http://uaprof.motorola.com/phoneconfig/motomb865/Profile/motomb865.rdf
@@ -41,7 +42,7 @@ ro.mot.hw.HAC=1
 ro.mot.deep.sleep.supported=true
 
 #Enable ATT Wi-fi hotspot setting
-ro.mot.wifi.hotspot=1
+ro.mot.wifi.hotspot=0
 
 # add HTTP headers (x-att-deviceid) for AT&T
 attheader.config_flex_is_on=1
@@ -101,16 +102,47 @@ ro.mot.btpan.disable = true
 ro.mot.btdun.disable = true
 # END Motorola, IKHSS6UPGR-6821
 
+# BEGIN Motorola rdh768 07-Mar-2012 IKCNDEVICS-2347
+# Indicating the internal sdcard mount type in recovery mode
+# 0 there is no internal sdcard
+# 1 the mount point for internal sdcard is /sdcard
+# 2 the mount point for internal sdcard is /emstorage (umts spyder)
+ro.mot.emmcsdcard.recoverytype=0
+# END IKCNDEVICS-2347
+
+# BEGIN Motorola a22103 21-Mar-2012 IKCNDEVICS-3395
+# Simulate sdcard on /data/media
+persist.fuse_sdcard=true
+# END IKCNDEVICS-3395
+
+# Motorola a18540 IKCNDEVICS-3404
+ro.mot.fuse.preserve=400
+
+#switcher for allowing the volume key(up&down) to wakeup phone
+persist.mot.volumekey.wakeup=0
+
+# BEGIN Motorola, cfm876, 04/25/2012, IKCNDEVICS-5251
+#Indicating the automatic birghtness mode
+#0 brigth
+#1 normal
+#2 dim
+#2 dimmer
+persist.mot.autobrightmode=1
+# END IKCNDEVICS-5251
+
+# disable MotoCast
+ro.mot.motocast.deprecated=1
+
 #
 # ADDITIONAL_BUILD_PROPERTIES
 #
-dalvik.vm.heapstartsize=5m
+dalvik.vm.heapstartsize=8m
 dalvik.vm.heapgrowthlimit=42m
 dalvik.vm.heapsize=128m
 drm.service.enabled=true
 ro.com.google.clientidbase=android-motorola
-ro.com.google.clientidbase.ms=android-att-us
-ro.com.google.clientidbase.am=android-att-us
+ro.com.google.clientidbase.ms=android-motorola
+ro.com.google.clientidbase.am=android-motorola
 ro.com.google.clientidbase.gmm=android-motorola
 ro.com.google.clientidbase.yt=android-motorola
 ro.mot.ste.modem.ttydevice=/dev/ttyO0
@@ -120,14 +152,16 @@ persist.ril.modem.ttydevice=/dev/ttySPI0
 persist.ril.features=0x06
 persist.ril.mux.retries=500
 persist.ril.mux.sleep=2
-ro.config.notification_sound=OnTheHunt.ogg
+persist.sys.usb.config=mtp
+ro.carrier=unknown
 ro.config.alarm_alert=Alarm_Classic.ogg
-ro.com.google.gmsversion=4.0_r2
+ro.bug2go.uid.type=TELEPHONY_DEVICE_ID
+ro.bug2go.magickeys=24,26
 ro.crypto.state=unencrypted
 ro.media.enc.aud.fileformat=amr
 ro.media.enc.aud.codec=amrnb
 android.os.build.BRAND=ATT
-ro.mot.noroamingicon=1
+persist.sys.strictmode.disable=true
 ro.hss6upgrade.hide.motocastid=TRUE
 ro.media.camcorder.1080p=mp4,h264,30,15000000,aac,128000,44100,2
 ro.media.camcorder.720p=mp4,h264,30,10000000,aac,128000,44100,2
@@ -137,6 +171,7 @@ ro.media.camcorder.cif=mp4,h264,30,1500000,aac,128000,44100,2
 ro.media.camcorder.qvga=mp4,h264,15,500000,aac,64000,44100,2
 ro.media.camcorder.mms=3gp,h264,15,128000,amrnb,12200,8000,1
 ro.media.camcorder.mmsres=qvga
+ro.media.camcorder.mmssize=304128
 ro.camcorder.zoom=true
 ro.media.capture.maxres=8m
 ro.media.capture.fast.fps=4
@@ -145,7 +180,7 @@ ro.media.capture.flash=led
 ro.media.capture.flashMinV=3300000
 ro.media.capture.torchIntensity=40
 ro.media.capture.flashIntensity=70
-ro.media.panorama.defres=3264x1840
+ro.media.panorama.defres=2592x1458
 ro.media.panorama.frameres=1280x720
 ro.camcorder.mute=false
 ro.camera.dynamicFocus=true
@@ -168,21 +203,4 @@ ro.mot.dpmext=true
 ro.com.google.clientid=android-motorola
 ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html
 ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html
-ro.build.version.full=JB_Version.4.1.1_r3.MB865.ATT.en.EU
 ro.mot.hidden_keyboards=evfwd
-ro.mot.build.version.sdk_int=6
-ro.mot.hw.fingerprint.enable=1
-
-ro.setupwizard.enable_bypass=1
-persist.sys.usb.config=mass_storage,adb
-
-# Additions
-com.ti.omap_enhancement=true
-hwui.render_dirty_regions=false
-persist.sys.root_access=3
-ro.hwc.legacy_api=true
-ro.product.use_charge_counter=1
-persist.sys.gsm_signalstrength=true
-persist.sys.moto_oem_telephony=false
-persist.sys.moto_imsi_fix=false
-ro.config.not_world_phone=true
