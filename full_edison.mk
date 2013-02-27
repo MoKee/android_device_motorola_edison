@@ -21,14 +21,16 @@
 # lines, full and edison, hence its name.
 #
 
+# Camera and Gallery
+PRODUCT_PACKAGES := \
+    Gallery
+
 #if we do this after the full_base_telephony is included some of these don't get picked up..
 
 PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=umts_edison
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-# This is where we'd set a backup provider if we had one
-#$(call inherit-product, device/sample/products/backup_overlay.mk)
 # Inherit from edison device
 $(call inherit-product-if-exists, device/motorola/kexec/kexec.mk)
 $(call inherit-product, device/motorola/edison/device.mk)

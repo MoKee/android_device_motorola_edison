@@ -21,15 +21,11 @@
 
 DEVICE_PACKAGE_OVERLAYS := device/motorola/edison/overlay
 
-# Audio
-PRODUCT_COPY_FILES += \
-    device/motorola/edison/audio/alsa.omap4.so:/system/lib/hw/alsa.omap4.so \
-    device/motorola/edison/audio/audio.primary.omap4.so:/system/lib/hw/audio.primary.edison.so \
-    device/motorola/edison/audio/audio_policy.omap4.so:/system/lib/hw/audio_policy.omap4.so \
-    device/motorola/edison/audio/libasound.so:/system/lib/libasound.so \
-    device/motorola/edison/audio/libaudio_ext.so:/system/lib/libaudio_ext.so
-
 # Hardware HALs
+PRODUCT_PACKAGES += \
+    camera.edison \
+    lights.edison
+
 ifeq ($(BOARD_USES_KEXEC),true)
 PRODUCT_PACKAGES += \
     hwcomposer.edison
@@ -37,61 +33,43 @@ endif
 
 # Modem
 PRODUCT_PACKAGES += \
-    Stk Torch
-
-# Extras
-PRODUCT_PACKAGES += \
-    openssl
+    Stk
 
 # Root files
 PRODUCT_COPY_FILES += \
     device/motorola/edison/root/default.prop:/root/default.prop \
-    device/motorola/edison/root/init.rc:/root/init.rc \
     device/motorola/edison/root/init.mapphone_cdma.rc:/root/init.mapphone_cdma.rc \
     device/motorola/edison/root/init.mapphone_umts.rc:/root/init.mapphone_umts.rc \
-    device/motorola/edison/root/ueventd.rc:/root/ueventd.rc \
     device/motorola/edison/root/ueventd.mapphone_cdma.rc:/root/ueventd.mapphone_cdma.rc \
-    device/motorola/edison/root/ueventd.mapphone_umts.rc:/root/ueventd.mapphone_umts.rc
+    device/motorola/edison/root/ueventd.mapphone_umts.rc:/root/ueventd.mapphone_umts.rc \
+    device/motorola/edison/root/init.usb.rc:/root/init.usb.rc
 
 # Kexec files and ti ducati or rootfs files
 ifeq ($(BOARD_USES_KEXEC),true)
-ifeq ($(TARGET_PRODUCT),full_edison)
-PRODUCT_COPY_FILES += device/motorola/common/prebuilt/etc/rootfs/init:root/init
-endif
 PRODUCT_COPY_FILES += \
-    device/motorola/edison/kexec/arm_kexec.ko:system/etc/kexec/arm_kexec.ko \
-    device/motorola/edison/kexec/atags:system/etc/kexec/atags \
     device/motorola/edison/kexec/devtree:system/etc/kexec/devtree \
-    device/motorola/edison/kexec/kexec:system/etc/kexec/kexec \
-    device/motorola/edison/kexec/kexec.ko:system/etc/kexec/kexec.ko \
-    device/motorola/edison/kexec/uart.ko:system/etc/kexec/uart.ko \
-    out/target/product/edison/ramdisk.img:system/etc/kexec/ramdisk.img \
-    out/target/product/edison/kernel:system/etc/kexec/kernel
+    $(OUT)/ramdisk.img:system/etc/kexec/ramdisk.img \
+    device/motorola/edison/prebuilt/etc/firmware/ducati-m3.bin:system/etc/firmware/ducati-m3.bin \
+    $(OUT)/kernel:system/etc/kexec/kernel
 else
-ifeq ($(TARGET_PRODUCT),full_edison)
-PRODUCT_COPY_FILES += device/motorola/common/prebuilt/etc/rootfs/init:system/etc/rootfs/init
-else
-PRODUCT_COPY_FILES += out/target/product/edison/root/init:system/etc/rootfs/init
-endif
 PRODUCT_COPY_FILES += \
     device/motorola/edison/root/default.prop:/system/etc/rootfs/default.prop \
-    device/motorola/edison/root/init.rc:/root/init.rc \
+    device/motorola/edison/root/init.rc:/system/etc/rootfs/init.rc \
     device/motorola/edison/root/init.mapphone_cdma.rc:/system/etc/rootfs/init.mapphone_cdma.rc \
     device/motorola/edison/root/init.mapphone_umts.rc:/system/etc/rootfs/init.mapphone_umts.rc \
+    device/motorola/edison/root/init.usb.rc:/system/etc/rootfs/init.usb.rc \
     device/motorola/edison/root/ueventd.rc:/system/etc/rootfs/ueventd.rc \
     device/motorola/edison/root/ueventd.mapphone_cdma.rc:/system/etc/rootfs/ueventd.mapphone_cdma.rc \
     device/motorola/edison/root/ueventd.mapphone_umts.rc:/system/etc/rootfs/ueventd.mapphone_umts.rc \
-    out/target/product/edison/root/sbin/adbd:system/etc/rootfs/sbin/adbd
+    $(OUT)/root/sbin/adbd:system/etc/rootfs/sbin/adbd
 endif
 
 # Prebuilts
 PRODUCT_COPY_FILES += \
-    device/motorola/edison/prebuilt/bin/battd:system/bin/battd \
-    device/motorola/edison/prebuilt/bin/mount_ext3.sh:system/bin/mount_ext3.sh \
-    device/motorola/edison/prebuilt/etc/gps.conf:system/etc/gps.conf \
     device/motorola/edison/prebuilt/etc/media_codecs.xml:system/etc/media_codecs.xml \
+    device/motorola/edison/prebuilt/etc/media_profiles.xml:system/etc/media_profiles.xml \
     device/motorola/edison/prebuilt/etc/audio_policy.conf:system/etc/audio_policy.conf \
-    device/motorola/edison/prebuilt/etc/vold.fstab:system/etc/vold.fstab \
+    device/motorola/edison/prebuilt/etc/vold.fstab:system/etc/vold.fstab
 
 # copy all kernel modules under the "modules" directory to system/lib/modules
 ifneq ($(BOARD_USES_KEXEC),true)
@@ -101,4 +79,4 @@ PRODUCT_COPY_FILES += $(shell \
     | tr '\n' ' ')
 endif
 
-$(call inherit-product, device/motorola/common/common.mk)
+$(call inherit-product, device/motorola/omap4-common/common.mk)

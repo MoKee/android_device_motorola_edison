@@ -1,14 +1,11 @@
 # inherit from common
--include device/motorola/common/BoardConfigCommon.mk
+-include device/motorola/omap4-common/BoardConfigCommon.mk
 
 # inherit from the proprietary version
 -include vendor/motorola/edison/BoardConfigVendor.mk
 
 # Processor
 TARGET_BOOTLOADER_BOARD_NAME := edison
-
-# DOMX
-TI_CUSTOM_DOMX_PATH := device/motorola/common/domx
 
 # Kernel
 ifeq ($(BOARD_USES_KEXEC),true)
@@ -21,6 +18,3 @@ BOARD_PAGE_SIZE := 0x4096
 
 # Kernel Build
 TARGET_PREBUILT_KERNEL := device/motorola/edison/kernel
-
-# Recovery
-BOARD_NONSAFE_SYSTEM_DEVICE := /dev/block/mmcblk1p21

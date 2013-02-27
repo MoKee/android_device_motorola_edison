@@ -1,4 +1,4 @@
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright (C) 2008 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#
-# AndroidBoard.mk is a legacy mechanism to deal with a few
-# edge-cases that can't be managed otherwise. No new rules
-# should be added to this file.
-#
-
-LOCAL_PATH := $(call my-dir)
-
+LOCAL_PATH:= $(call my-dir)
+# HAL module implemenation stored in
+# hw/<COPYPIX_HARDWARE_MODULE_ID>.<ro.board.platform>.so
 include $(CLEAR_VARS)
 
-#file := $(TARGET_RECOVERY_ROOT_OUT)/sbin/postrecoveryboot.sh
-#ALL_PREBUILT += $(file)
-#$(file) : $(LOCAL_PATH)/recovery/postrecoveryboot.sh | $(ACP)
-#	$(transform-prebuilt-to-target)
+LOCAL_SRC_FILES := lights.c
+LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+LOCAL_SHARED_LIBRARIES := liblog
+LOCAL_MODULE := lights.$(TARGET_BOOTLOADER_BOARD_NAME)
+LOCAL_MODULE_TAGS := optional
 
-# include the non-open-source counterpart to this file
--include vendor/motorola/edison/AndroidBoardVendor.mk
+include $(BUILD_SHARED_LIBRARY)
