@@ -1,5 +1,4 @@
-#
-# Copyright 2012 The Android Open Source Project
+# Copyright (C) 2012 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 #
 # This file is the build configuration for a full Android
 # build for edison hardware. This cleanly combines a set of
@@ -25,14 +25,12 @@
 PRODUCT_PACKAGES := \
     Gallery
 
-#if we do this after the full_base_telephony is included some of these don't get picked up..
 
 PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=umts_edison
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit from edison device
-$(call inherit-product-if-exists, device/motorola/kexec/kexec.mk)
 $(call inherit-product, device/motorola/edison/device.mk)
 
 # Set those variables here to overwrite the inherited values.
@@ -41,9 +39,3 @@ PRODUCT_DEVICE := edison
 PRODUCT_BRAND := MOTO
 PRODUCT_MANUFACTURER := Motorola
 PRODUCT_MODEL := ATRIX 2
-
-$(call inherit-product-if-exists, vendor/motorola/edison/edison-vendor.mk)
-ifneq ($(BOARD_USES_KEXEC),true)
-$(call inherit-product-if-exists, vendor/motorola/edison/edison-vendor-pvr.mk)
-$(call inherit-product-if-exists, vendor/motorola/edison/edison-vendor-stock-camera.mk)
-endif
