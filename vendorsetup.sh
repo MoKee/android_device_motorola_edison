@@ -20,8 +20,4 @@
 # In particular, you can add lunch options with the add_lunch_combo
 # function: add_lunch_combo generic-eng
 
-add_lunch_combo aokp_edison-userdebug
-add_lunch_combo cm_edison-userdebug
-add_lunch_combo cna_edison-userdebug
-add_lunch_combo full_edison-userdebug
-add_lunch_combo killrom_edison-userdebug
+#add_lunch_combo cm_edison-userdebug

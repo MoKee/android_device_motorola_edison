@@ -1,4 +1,4 @@
-# Copyright (C) 2011 The Android Open Source Project
+# Copyright (C) 2012 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,12 +24,6 @@
 # Camera and Gallery
 PRODUCT_PACKAGES := \
     Gallery
-
-#if we do this after the full_base_telephony is included some of these don't get picked up..
-ifeq ($(TARGET_PRODUCT),full_edison)
-PRODUCT_COPY_FILES += \
-    device/motorola/edison/prebuilt/etc/apns-conf.xml:system/etc/apns-conf.xml
-endif
 
 PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=umts_edison
 
