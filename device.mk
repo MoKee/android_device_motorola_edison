@@ -15,7 +15,7 @@
 #
 # This is the product configuration for a full edison
 #
-$(call inherit-product, device/motorola/omap4-kexec-common/common.mk)
+$(call inherit-product, device/motorola/omap4-common/common.mk)
 
 DEVICE_FOLDER := device/motorola/edison
 
