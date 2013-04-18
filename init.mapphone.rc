@@ -1,7 +1,7 @@
-import /init.safestrap-${ro.boot.safestrap.romslot}.rc
-
 on init
-    loglevel 8
+    exec /sbin/fixboot.sh
+
+loglevel 8
 
     export EXTERNAL_STORAGE /storage/sdcard1
     export SECONDARY_STORAGE /storage/sdcard0
@@ -20,24 +20,27 @@ on init
     mkdir /preinstall 0771 system system
     mkdir /cdrom 0770 system system
 
-    symlink /data/tmp /tmp
-
+# Permissions for RIL. Need to be set before boot.
+    chown radio radio /sys/class/radio/w3g_lte/command
     chmod 0660 /sys/bus/usb/devices/usb1/power/control
     chmod 0660 /sys/bus/usb/devices/usb2/power/control
     chown system radio /sys/bus/usb/devices/usb1/power/control
     chown system radio /sys/bus/usb/devices/usb2/power/control
-
-
-# change permission/ownership for command sys file of mdm6600 ctrl driver if present
     chown system radio /sys/class/radio/mdm6600/command
 
 on fs
-#   now handled in init.safestrap-*.rc
-#   mount ext3 /dev/block/system /system wait discard noatime nodiratime barrier=1
-#   mount ext3 /dev/block/userdata /data discard nosuid nodev noatime nodiratime
-#   mount ext3 /dev/block/cache /cache discard nosuid nodev noatime nodiratime
-    mount ext3 /dev/block/pds /pds nosuid nodev noatime nodiratime
+# begin SS3 setup
+    mount rootfs rootfs / rw remount
+    mkdir /ss 0777 root root
+    mount vfat /dev/block/emstorage /ss
+# end SS3 setup
+    mount ext3 loop@/ss/safestrap/rom-slot1/system.img /system wait noatime nodiratime barrier=1
+    mount ext3 loop@/ss/safestrap/rom-slot1/userdata.img /data nosuid nodev noatime nodiratime
+    mount ext3 loop@/ss/safestrap/rom-slot1/cache.img /cache nosuid nodev noatime nodiratime
 on post-fs
+    exec /system/bin/pdsbackup.sh
+    # Load FIPS kernel module
+    exec /system/bin/fips_loader /system/lib/modules
 # Enable PVR modules
     insmod /system/lib/modules/pvrsrvkm_sgx540_120.ko
     insmod /system/lib/modules/omaplfb_sgx540_120.ko
@@ -47,13 +50,12 @@ on post-fs
 
     mount ext3 /dev/block/system /system ro noatime nodiratime remount
     mount rootfs rootfs / rw remount
-# Backward compatibility
-    symlink /dev /dev/netmux
     symlink /dev/ttyGS0 /dev/acm0
 
 # Create mountpoints and mount tmpfs
     mkdir /misc 0770 system misc
     mkdir /sd-ext 0771 system system
+    symlink /data/tmp /tmp
     mount tmpfs tmpfs /tmp
 
     # Same reason as /data above
@@ -126,27 +128,12 @@ on post-fs
     chmod 0664 /pds/wifi/nvs_map.bin
     mkdir /pds/whisper 0770 mot_whisper mot_whisper
     mkdir /pds/whisper/whisper_only 0700 mot_whisper mot_whisper
-    mkdir /tmp/commdrv 0770 radio radio
-    chown mot_whisper mot_whisper /pds/whisper
-    chmod 0770 /pds/whisper
-    mkdir /pds/whisper/whisper_only 0700 mot_whisper mot_whisper
-    chown mot_whisper mot_whisper /pds/whisper/whisper_only
-    chmod 0700 /pds/whisper/whisper_only
-    chown mot_whisper /pds/whisper/whisper_only/vector0.bin
     # bluetooth power up/down interface
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /dev/ttyO1
     chmod 0660 /dev/ttyO1
-    # following dir is for storing BP Flex and PDS files. NVM Daemon is using this
-    mkdir /pds/bp_nvm 0770 radio radio
-    chown system radio /cache/ste
-    chmod 0750 /cache/ste
-    chown system radio /cache/ste/modem
-    chmod 0750 /cache/ste/modem
-    chmod 0660 /dev/ttyO2
-    chown radio radio /dev/ttyO2
     # create the lost+found directories, so as to enforce our permissions
     mkdir /pds/lost+found 0770 root root
 # create the necessary pds dirs for tpapi with proper permission
@@ -163,16 +150,10 @@ on post-fs
 # Install kernel modules
 # Install product specific kernel modules
     exec /system/bin/load_modules.sh
-# chown/chmod for FOTA
-    chown system system /cache/fota
-    chmod 0770 /cache/fota
-    setprop wifi.interface "wlan0"
-    setprop softap.interface "wlan0"
 # Load BT userspace driver
+    insmod /system/lib/modules/btwilink.ko
     insmod /system/lib/modules/tty_hci.ko
 # Load wifi drivers (all except wl12xx_sdio)
-    mkdir /data/misc/wifi/sockets 0770 wifi wifi
-    mkdir /data/misc/dhcp 0770 dhcp dhcp
     insmod /system/lib/modules/compat.ko
     insmod /system/lib/modules/cfg80211.ko
     insmod /system/lib/modules/mac80211.ko
@@ -193,9 +174,6 @@ on post-fs-data
     write /data/tmp/bluedroid_ref 0
     chown system system /data/tmp/bluedroid_ref
     chmod 0660 /data/tmp/bluedroid_ref
-    # create moto specific dirs for mystuff
-    mkdir /data/download 0775 system system
-    mkdir /data/download/mystuff 0775 system system
     # fix cache for market access
     chmod 775 /cache
     mkdir /cache/download 0775 system system
@@ -213,12 +191,6 @@ on post-fs-data
     mkdir /data/local/dbvc 0770 mot_tcmd shell
     mkdir /data/local/12m 0771 mot_tcmd shell
     mkdir /data/local/12m/batch 0771 mot_tcmd shell
-    mkdir /data/gki 0770 radio radio
-    mkdir /data/ste
-    mkdir /data/ste/modem radio radio
-    chmod 0660 /sys/class/ste/gpio190/value
-    chown root radio /sys/class/ste/gpio190/value
-    mkdir /data/ste_modem_panics 0770 system radio
     # create logger folder
     mkdir /data/logger 0750 log log
     mkdir /data/panicreports 0775 root radio
@@ -292,7 +264,6 @@ on boot
     setprop ro.sys.atvc_allow_bp_log 0
     setprop ro.sys.atvc_allow_ap_mot_log 0
     setprop ro.sys.atvc_allow_simswap 0
-    setprop ro.sys.atvc_allow_gki_log 0
 # Change the ownership of led files.
    chown system system /sys/class/leds/lcd-backlight/als
    chown system system /sys/class/leds/lcd-backlight/pwm_mode
@@ -481,20 +452,19 @@ on boot
     setprop ro.net.dns_cache_size 400
 # Enable production security key check for 3LM
     setprop ro.3lm.production 1
-#Optimize TCP parameters to meet CAT14 HSDPA throughput
+# Define TCP buffer sizes for various networks
 # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.default 131072,262144,655360,4096,16384,147456
+    setprop net.tcp.buffersize.default 131072,262144,524288,4096,16384,131072
     setprop net.tcp.buffersize.wifi 131072,262144,524288,4096,16384,131072
-    setprop net.tcp.buffersize.umts 131072,262144,655360,4096,16384,147456
-    setprop net.tcp.buffersize.hspa 131072,262144,704512,4096,16384,147456
+    setprop net.tcp.buffersize.umts 131072,262144,524288,4096,16384,131072
+    setprop net.tcp.buffersize.hspa 131072,262144,524288,4096,16384,147456
     setprop net.tcp.buffersize.edge 16384,32768,65536,4096,16384,32768
     setprop net.tcp.buffersize.gprs 4096,8192,12288,4096,8192,12288
     setprop net.tcp.buffersize.cdma 4096,12288,24576,4096,12288,24576
     setprop net.tcp.buffersize.evdo 16384,32768,65536,4096,16384,51200
     setprop net.tcp.buffersize.lte 524288,1048576,2097152,262144,524288,1048576
     setprop net.tcp.buffersize.2ghotspot 4096,12288,24576,4096,12288,24576
-    setprop net.tcp.buffersize.2ghotspot 4096,16384,32768,16384,32768,65536
-    setprop net.tcp.buffersize.3ghotspot 4096,16384,147456,131072,262144,704512
+    setprop net.tcp.buffersize.3ghotspot 4096,16384,51200,16384,32768,65536
     setprop net.tcp.buffersize.4ghotspot 262144,524288,1048576,524288,1048576,2097152
 # Network Bandwidth control for netd
     setprop persist.bandwidth.enable 1
@@ -522,6 +492,7 @@ on charger
     trigger post-fs
     trigger post-fs-data
     trigger start-charging
+
 on start-charging
     chown system system /sys/power/state
     chmod 0660 /sys/power/state
@@ -548,28 +519,20 @@ on property:sys.chargeonly.mode=1
     start whisperd
     start charge_only_mode
 # Power up to suspend
+
 service dnsmasq /system/bin/logwrapper /system/bin/dnsmasq -C/data/misc/wifi/dns.conf -k
     class main
     group wifi
     disabled
     oneshot
-# aplogd on at boot in emulator
-on property:ro.kernel.qemu=1
-    start aplogd
-on property:persist.log.aplogd.enable=1
-    start aplogd
-on property:persist.log.aplogd.enable=0
-    stop aplogd
 #start console for userdebug and eng builds
 on property:ro.debuggable=1
     start console
 # Moto safe power down
 on property:sys.reboot=1
-    stop ssmgrd
     exec /system/bin/sleep 10
     exec /system/bin/reboot
 on property:sys.shutdown=1
-    stop ssmgrd
     exec /system/bin/sleep 10
     exec /system/bin/reboot -p
 on property:init.svc.wpa_supplicant=stopped
@@ -580,61 +543,6 @@ on property:ro.hdcp.support=1
 on property:ro.hdcp.support=2
     chown system media /dev/omap-hdcp
     chmod 0660 /dev/omap-hdcp
-service gkisystem /system/bin/gkisystem
-    class main
-    socket location_shim stream 660 radio system
-    socket gpshal_socket stream 660 radio system
-    group radio mot_accy mot_secclkd
-service locDrv /system/bin/gps_driver
-    class main
-    user radio
-    group radio inet sdcard_rw
-service locEe /system/bin/ee_driver
-    class main
-    user radio
-    group radio inet sdcard_rw
-on property:sys.shutdown.requested=1
-    term mid
-on property:sys.shutdown.requested=0
-    term mid
-service mid /system/bin/mid --cfg /system/etc/mid.conf
-    class core
-    user root
-    group root
-    oneshot
-service mfa /system/bin/mfa -m /cache/ste/modem --noslave
-    user system
-    group radio
-    socket mfa_control seqpacket 0600 system radio
-    oneshot
-    disabled
-service atrelay-itp /system/bin/logwrapper /system/bin/atrelay-ctrl.sh itp
-    user root
-    group radio mot_usb
-    disabled
-service atrelay-svc /system/bin/logwrapper /system/bin/atrelay-ctrl.sh service
-    user root
-    group radio mot_usb
-    disabled
-service atrelay-sig /system/bin/logwrapper /system/bin/atrelay-ctrl.sh signaling
-    user root
-    group radio mot_usb
-    disabled
-service mld /system/bin/mld -f -s 10240 -r /data/modem_radio_log.txt -a /data/modem_app_log.txt
-    user radio
-    group system net_admin bluetooth
-    oneshot
-    disabled
-service nvm-daemon /system/usr/bin/nvm_daemon
-    class core
-    user radio
-    group radio
-# start commdrv pds script
-service start_commdrv /system/bin/sh /system/etc/motorola/comm_drv/commdrv_fs.sh
-    class core
-    oneshot
-    user radio
-    group radio system cache
 service battd /system/bin/battd
     class core
     socket battdsock stream 0666 mot_accy mot_accy
@@ -650,13 +558,14 @@ service whisperd /system/bin/whisperd /dev/ttyO1
     user mot_whisper
     group mot_whisper mot_pwric
     oneshot
-service ssmgrd /system/xbin/ssmgrd
-    class main
-    group radio input mot_pwric
+service msp430 /system/bin/msp430 boot
+    class core
+    user compass
+    group compass misc input
     oneshot
 service uim /system/bin/uim-sysfs
     class core
-    user root
+    user  root
     group bluetooth net_bt_admin
 service hciattach /system/bin/hciattach -l
     class main
@@ -760,12 +669,6 @@ service pvrsrv /system/vendor/bin/pvrsrvinit
     user root
     group root
     oneshot
-service bugtogo /system/bin/bugtogo.sh
-    class main
-    disabled
-    user root
-    oneshot
-    keycodes 114 115
 service pppd-ril /system/bin/pppd-ril /dev/ttyUSB0 call pppd-ril.options plugin /system/lib/libpppd_plugin-ril.so
     class main
     user root
@@ -801,16 +704,27 @@ service fmradio /system/bin/fmradioserver
     user system
     group bluetooth net_bt_admin net_raw net_admin misc
     disabled
+service ftmipcd /system/bin/ftmipcd
+    class main
+    user radio
+    group radio inet
+service qbplogd /system/bin/qbplogd
+    class main
+    user radio
+    group sdcard_rw radio inet
+    oneshot
+    disabled
 service dund_dialup /system/bin/dund --listen --channel=6 --nodetach --dialup
     class main
     group net_bt net_bt_admin
     disabled
     oneshot
-service secclkd /system/bin/secclkd
-    class main
-    socket secclk_socket stream 660 mot_secclkd mot_secclkd radio
-    user mot_tpapi
-    group mot_tpapi mot_sec_rtc mot_secclkd radio
+on property:dev.bootcomplete=1
+#    start loadpreinstalls
+service gadget-lte-modem /system/bin/tty2ttyd ril.wrigley.modem.tty /dev/ttyGS1 0 512
+    user radio
+    group radio
+    disabled
 service thermal_manager /system/bin/thermaldaemon
     class main
     user system
@@ -826,7 +740,17 @@ on property:sys.mot.encrypt.pass.prot=1
 # Enable Hotplug governor only for OMAP ES2.2 Silicon
 on property:ro.revision=34
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor hotplug
-service upgrade_certs /system/bin/upgrade_certs
+# Add any hotplug tuning parameters here.
+
+# Wifi calibrate
+service wifi_calibrator /system/bin/sh /system/bin/wifical.sh
     disabled
-    user system
-    group system
+    class late_start
+    user root
+    group wifi
+    oneshot
+
+# Very first boot. We need to set the MAC address
+on property:persist.wlan.ti.calibrated=0
+    start wifi_calibrator
+    setprop persist.wlan.ti.calibrated 1
