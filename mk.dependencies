@@ -1,0 +1,13 @@
+[
+  {
+    "repository": "MoKee/android_kernel_motorola_omap4-common",
+    "target_path": "kernel/motorola/omap4-common",
+    "branch": "jb-mr1_mkt"
+  },
+  {
+    "repository": "MoKee/android_vendor_motorola_edison",
+    "target_path": "vendor/motorola/edison",
+    "branch": "jb-mr1_mkt"
+  }
+]
+
