@@ -349,7 +349,7 @@
         <EncoderProfile quality="480p" fileFormat="mp4" duration="30">
              <Video codec="m4v"
                     bitRate="6000000"
-                    width="720"
+                    width="640"
                     height="480"
                     frameRate="30" />
 
