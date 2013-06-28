@@ -283,7 +283,7 @@ struct hw_module_t HAL_MODULE_INFO_SYM = {
     .version_major = 1,
     .version_minor = 0,
     .id = LIGHTS_HARDWARE_MODULE_ID,
-    .name = "Umts_spyder lights Module",
+    .name = "OMAP4 lights Module",
     .author = "STS-Dev-Team, AOSP, Google",
     .methods = &lights_module_methods,
 };
