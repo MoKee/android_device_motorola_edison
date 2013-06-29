@@ -41,6 +41,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(DEVICE_FOLDER)/root/init.mapphone.rc:root/init.mapphone_umts.rc \
     $(DEVICE_FOLDER)/root/init.mapphone.rc:root/init.mapphone_cdma.rc \
+    $(DEVICE_FOLDER)/root/init.target.rc:root/init.target.rc \
     $(DEVICE_FOLDER)/root/init.rc:root/init.rc \
     $(DEVICE_FOLDER)/root/init:root/init \
     $(DEVICE_FOLDER)/root/ueventd.rc:root/ueventd.rc \

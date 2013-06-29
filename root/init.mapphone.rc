@@ -3,10 +3,10 @@ on init
 
 loglevel 8
 
-    mkdir /storage 0050 system sdcard_r
-
     export EXTERNAL_STORAGE /storage/sdcard1
     export SECONDARY_STORAGE /storage/sdcard0
+
+    mkdir /storage/sdcard0 0000 system system
     mkdir /storage/sdcard1 0000 system system
     # for backwards compatibility
     symlink /storage/sdcard1 /sdcard
@@ -32,7 +32,7 @@ on fs
 # begin SS3 setup
     mount rootfs rootfs / rw remount
     mkdir /ss 0777 root root
-    mount vfat /dev/block/emstorage /ss
+    mount vfat /dev/block/mmcblk1p25 /ss
 # end SS3 setup
     mount ext3 loop@/ss/safestrap/rom-slot1/system.img /system wait noatime nodiratime barrier=1
     mount ext3 loop@/ss/safestrap/rom-slot1/userdata.img /data nosuid nodev noatime nodiratime
@@ -538,7 +538,7 @@ on boot
 
 # Start services
     exec /system/bin/mot_boot_mode
-#    exec /system/bin/serialno_tracker
+    start wifical_check
 # Set core max size (2G)
     setrlimit 4 2147483648 2147483648
     mount debugfs /sys/kernel/debug /sys/kernel/debug
@@ -581,25 +581,7 @@ on property:sys.chargeonly.mode=1
     start battd
     start whisperd
     start charge_only_mode
-    
-#on property:persist.service.adb.enable=1
-#    start adbd
-    
 # Power up to suspend
-#on property:tcmd.suspend=1
-#    stop surfaceflinger
-#    stop media
-#    stop zygote
-# Normal to suspend
-#on property:tcmd.suspend=2
-#    stop surfaceflinger
-#    stop media
-#    stop zygote
-# suspend to start services
-#on property:tcmd.suspend=3
-#    start surfaceflinger
-#    start media
-#    start zygote
 service tund /system/bin/tund
     class core
     socket tund stream 0660 vpn system
@@ -608,10 +590,6 @@ service nexus /system/bin/nexus
     class core
     socket nexus stream 0660 root system
     disabled
-# Copy 12M/batch files
-#service 12m_files_copy /system/etc/12m_files_copy.sh
-#    class core
-#    oneshot
 service dnsmasq /system/bin/logwrapper /system/bin/dnsmasq -C/data/misc/wifi/dns.conf -k
     class main
     group wifi
@@ -660,18 +638,6 @@ on property:ro.hdcp.support=2
 service qe /xbin/qe /system
     class core
     oneshot
-# Set property strings for ATVC logging
-# This conditionally sets :
-# ro.sys.atvc_allow_bp_log
-# ro.sys.atvc_allow_gki_log
-# ro.sys.atvc_allow_ap_mot_log
-# ro.sys.atvc_allow_all_core
-# ro.sys.atvc_allow_res_core
-# ro.sys.atvc_allow_res_panic
-# ro.sys.atvc_allow_efem
-# ro.sys.atvc_allow_netmon_usb
-# ro.sys.atvc_allow_netmon_ih
-# ro.sys.atvc_allow_all_adb
 service atvc /system/bin/dbvc_atvc_property_set
     class core
     user system
@@ -731,7 +697,7 @@ service start_commdrv /system/bin/sh /system/etc/motorola/comm_drv/commdrv_fs.sh
     class core
     oneshot
     user radio
-    group radio system cache    
+    group radio system cache
 service battd /system/bin/battd
     class core
     socket battdsock stream 0666 mot_accy mot_accy
@@ -963,12 +929,6 @@ service ftmipcd /system/bin/ftmipcd
     class main
     user radio
     group radio inet
-#service dlnasrv /system/bin/dlnasrv
-#    class main
-#    user mot_dlna
-#    group system net_admin sdcard_rw new_raw inet mount misc
-#    oneshot
-#    disabled
 service qbplogd /system/bin/qbplogd
     class main
     user radio
@@ -989,20 +949,6 @@ service gadget-lte-modem /system/bin/tty2ttyd ril.wrigley.modem.tty /dev/ttyGS1 
     user radio
     group radio
     disabled
-#on property:tcmd.ctrl_adb=1
-#    write /sys/class/android_usb/android0/pc_command_adb "adb"
-#    write /sys/class/android_usb/android0/pc_command_modem "modem"
-#    setprop sys.usb.config $sys.usb.config
-#    start adbd
-#on property:tcmd.ctrl_adb=0
-#    write /sys/class/android_usb/android0/pc_command_adb " "
-#    write /sys/class/android_usb/android0/pc_command_modem " "
-#    setprop sys.usb.config $sys.usb.config
-#    stop adbd
-#on property:persist.factory.allow_adb=1
-#    write /sys/class/android_usb/android0/pc_command_adb "adb"
-#on property:persist.factory.allow_adb=0
-#    write /sys/class/android_usb/android0/pc_command_adb " "
 #start Authentec VPN service
 service vpnclientpm /system/bin/vpnclientpm
     class main
@@ -1045,3 +991,23 @@ service upgrade_certs /system/bin/upgrade_certs
     disabled
     user system
     group system
+# Wifi check
+service wifical_check /system/bin/sh /system/bin/wificalcheck.sh
+    disabled
+    class late_start
+    user root
+    group wifi
+    oneshot
+
+# Wifi calibrate
+service wifi_calibrator /system/bin/sh /system/bin/wifical.sh
+    disabled
+    class late_start
+    user root
+    group wifi
+    oneshot
+
+# Very first boot. We need to set the MAC address
+on property:persist.wlan.ti.calibrated=0
+    start wifi_calibrator
+    setprop persist.wlan.ti.calibrated 1
