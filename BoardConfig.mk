@@ -34,6 +34,8 @@ BOARD_KERNEL_CMDLINE := root=/dev/ram0 rw mem=1023M@0x80000000 console=null vram
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_PAGE_SIZE := 0x4096
 
+TARGET_KERNEL_CONFIG := mapphone_edison_defconfig
+
 ifdef MK_RELEASE
 WITH_DEXPREOPT := true
 endif
