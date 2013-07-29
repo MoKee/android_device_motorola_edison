@@ -6,6 +6,14 @@
   {
     "repository": "android_vendor_motorola_edison",
     "target_path": "vendor/motorola/edison"
+  },
+  {
+    "repository": "android_device_motorola_omap4-common",
+    "target_path": "vendor/device/omap4-common"
+  },
+  {
+    "repository": "android_vendor_motorola_omap4-common",
+    "target_path": "vendor/motorola/omap4-common"
   }
 ]
 
