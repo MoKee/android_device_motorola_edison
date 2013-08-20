@@ -30,7 +30,6 @@ PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=umts_edison
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit from edison device
-$(call inherit-product-if-exists, device/motorola/kexec/kexec.mk)
 $(call inherit-product, device/motorola/edison/device.mk)
 
 # Set those variables here to overwrite the inherited values.

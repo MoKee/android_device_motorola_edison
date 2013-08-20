@@ -39,8 +39,6 @@
 #define CHARGE_LED_RGB   1
 #define CHARGE_LED_WHITE 2
 
-//#define HAVE_KEYBOARD
-
 static pthread_once_t g_init = PTHREAD_ONCE_INIT;
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -48,6 +46,7 @@ static struct light_state_t g_battery;
 static struct light_state_t g_notification;
 static int g_charge_led_active;
 static int g_last_button_brightness;
+static int g_last_keyboard_brightness;
 
 char const*const LCD_FILE = "/sys/class/backlight/lm3532_bl/brightness";
 char const*const BUTTON_ON_FILE = "/sys/class/leds/button-backlight/brightness";
@@ -67,6 +66,7 @@ void init_globals(void)
 
     g_charge_led_active = 0;
     g_last_button_brightness = -1;
+    g_last_keyboard_brightness = -1;
 }
 
 static int
