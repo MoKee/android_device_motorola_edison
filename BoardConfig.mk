@@ -45,6 +45,3 @@ TARGET_USES_CUSTOM_INITFILES := true
 # Specific recovery settings
 TARGET_RECOVERY_FSTAB := $(DEVICE_FOLDER)/fstab.mapphone_umts
 
-ifdef MK_RELEASE
-WITH_DEXPREOPT := true
-endif
