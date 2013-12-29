@@ -18,6 +18,9 @@
 #define _BDROID_BUILDCFG_H
 
 #define BTM_DEF_LOCAL_NAME   "Motorola Atrix 2"
+
+#define BLE_INCLUDED TRUE
+
 #define BTHC_USERIAL_READ_MEM_SIZE 2048
 
 #endif
