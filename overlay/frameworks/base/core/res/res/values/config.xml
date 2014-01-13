@@ -44,5 +44,9 @@
         <item>"/dev/ttyUSB4"</item>
     </string-array>
 
-</resources>
+    <!-- MMS user agent string -->
+    <string name="config_mms_user_agent" translatable="false">MB865</string>
 
+    <!-- MMS user agent prolfile url -->
+    <string name="config_mms_user_agent_profile_url" translatable="false">http://uaprof.motorola.com/phoneconfig/motomb865/Profile/motomb865.rdf</string>
+</resources>
