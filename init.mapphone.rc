@@ -137,6 +137,8 @@ on post-fs
     restorecon /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /dev/ttyO1
     chmod 0660 /dev/ttyO1
+    # change permissions for rfkill	133
+    chmod 0666 /dev/rfkill
     # following dir is for storing BP Flex and PDS files. NVM Daemon is using this
     mkdir /pds/bp_nvm 0770 radio radio
     chown system radio /cache/ste
