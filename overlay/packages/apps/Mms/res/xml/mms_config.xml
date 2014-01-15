@@ -88,5 +88,4 @@
     <!-- this is default to "x-wap-profile". Override if necessary. Optional -->
     <string name="uaProfTagName">profile</string>
 
-
 </mms_config>

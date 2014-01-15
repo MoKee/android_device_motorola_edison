@@ -137,7 +137,7 @@ on post-fs
     restorecon /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /dev/ttyO1
     chmod 0660 /dev/ttyO1
-    # change permissions for rfkill	133
+    # change permissions for rfkill
     chmod 0666 /dev/rfkill
     # following dir is for storing BP Flex and PDS files. NVM Daemon is using this
     mkdir /pds/bp_nvm 0770 radio radio
@@ -491,9 +491,6 @@ on boot
     chown root root /cache/trace
     chmod 0777 /cache/trace
 
-# ZRam setup
-    setprop persist.service.zram 18
-
 # Start services
     exec /system/bin/mot_boot_mode
     start wifical_check
@@ -653,7 +650,7 @@ service ssmgrd /system/xbin/ssmgrd
     oneshot
 service uim /system/bin/uim-sysfs
     class core
-    user root
+    user  root
     group bluetooth net_bt_admin
 # Ecompass daemon
 service akmd8975 /system/bin/akmd8975
