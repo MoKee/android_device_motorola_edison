@@ -1,14 +1,9 @@
 on init
 
-loglevel 8
-
-    # Create mountpoint so Dalvik can mark as slave in zygotes.
-    mount tmpfs tmpfs /storage mode=0050,uid=0,gid=1028
+loglevel 3
 
     mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
-
     mkdir /storage/sdcard0 0700 root root
-
     export EXTERNAL_STORAGE /storage/sdcard0
 
     # for backwards compatibility
@@ -33,6 +28,7 @@ loglevel 8
     chown system radio /sys/class/radio/mdm6600/command
 
 on fs
+    exec /sbin/fixboot.sh
     mount_all /fstab.mapphone_umts
 
 on post-fs
@@ -78,7 +74,7 @@ on post-fs
     # Disable automatic power control for OHCI USB IPC Temporarily
     #    write /sys/devices/platform/ohci-omap3/usb1/1-1/power/control auto
 
-    # kill green LED at boot
+# kill green LED at boot
     write /sys/class/leds/green/brightness 0
 
 # NFC configuration
@@ -137,8 +133,6 @@ on post-fs
     restorecon /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /dev/ttyO1
     chmod 0660 /dev/ttyO1
-    # change permissions for rfkill
-    chmod 0666 /dev/rfkill
     # following dir is for storing BP Flex and PDS files. NVM Daemon is using this
     mkdir /pds/bp_nvm 0770 radio radio
     chown system radio /cache/ste
@@ -147,6 +141,8 @@ on post-fs
     chmod 0750 /cache/ste/modem
     chmod 0660 /dev/ttyO2
     chown radio radio /dev/ttyO2
+    # change permissions for rfkill
+    chmod 0666 /dev/rfkill
     # create the lost+found directories, so as to enforce our permissions
     mkdir /pds/lost+found 0770 root root
 # create the necessary pds dirs for tpapi with proper permission
@@ -269,9 +265,6 @@ on early-boot
 # mount eCryptFS if required
     exec /system/bin/enc_mgt_tool
     class_start media_early_init
-
-    setprop vold.post_fs_data_done 1
-
 on boot
 # Define Motorola DBVC ATVC Property defaults (failsafe properties)
     setprop ro.sys.atvc_allow_netmon_usb 0
@@ -655,7 +648,7 @@ service ssmgrd /system/xbin/ssmgrd
     oneshot
 service uim /system/bin/uim-sysfs
     class core
-    user  root
+    user root
     group bluetooth net_bt_admin
 # Ecompass daemon
 service akmd8975 /system/bin/akmd8975
@@ -663,8 +656,9 @@ service akmd8975 /system/bin/akmd8975
     user compass
     group compass misc input
 service p2p_supplicant /system/bin/wpa_supplicant \
-    -iwlan0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf -N \
-    -ip2p0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -N \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
+    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
     -O/data/misc/wifi/sockets -puse_p2p_group_interface=1 \
     -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
     class main
@@ -682,7 +676,7 @@ service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
     oneshot
-service iprenew_wlan0 /system/bin/dhcpcd -n
+service iprenew_wlan0 /system/bin/dhcpcd -nBK
     class main
     disabled
     oneshot
@@ -690,7 +684,7 @@ service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     class main
     disabled
     oneshot
-service iprenew_p2p /system/bin/dhcpcd -n
+service iprenew_p2p /system/bin/dhcpcd -nBK
     class main
     disabled
     oneshot
