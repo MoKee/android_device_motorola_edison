@@ -98,5 +98,5 @@ ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html
 ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html
 ro.mot.build.version.sdk_int=6
 ro.mot.hw.fingerprint.enable=1
-ro.telephony.ril.v3=writeaidonly,signalstrength
+ro.telephony.ril.config=writeaidonly,signalstrength
 
