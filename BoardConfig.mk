@@ -20,6 +20,8 @@
 # definition file).
 #
 
+COMMON_FOLDER := device/motorola/edision
+
 # inherit from common
 -include device/motorola/omap4-common/BoardConfigCommon.mk
 
@@ -46,5 +48,5 @@ TARGET_KERNEL_VARIANT_CONFIG := mapphone_edison_defconfig
 TARGET_USES_CUSTOM_INITFILES := true
 
 # Specific recovery settings
-TARGET_RECOVERY_FSTAB := $(DEVICE_FOLDER)/fstab.mapphone_umts
+TARGET_RECOVERY_FSTAB = $(COMMON_FOLDER)/root/recovery.fstab
 

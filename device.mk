@@ -42,9 +42,9 @@ PRODUCT_PACKAGES += \
 # Kexec rootfs files
 PRODUCT_PACKAGES += etc/kexec/ramdisk.img
 PRODUCT_COPY_FILES += \
-    $(DEVICE_FOLDER)/init.mapphone.rc:root/init.mapphone_cdma.rc \
-    $(DEVICE_FOLDER)/init.mapphone.rc:root/init.mapphone_umts.rc \
-    $(DEVICE_FOLDER)/init.target.rc:root/init.target.rc \
+    $(DEVICE_FOLDER)/root/init.mapphone.rc:root/init.mapphone_cdma.rc \
+    $(DEVICE_FOLDER)/root/init.mapphone.rc:root/init.mapphone_umts.rc \
+    $(DEVICE_FOLDER)/root/init.target.rc:root/init.target.rc \
     $(DEVICE_FOLDER)/kexec/devtree:system/etc/kexec/devtree \
     $(OUT)/kernel:system/etc/kexec/kernel
 

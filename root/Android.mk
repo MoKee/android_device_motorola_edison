@@ -1,4 +1,4 @@
-# Copyright (C) 2013 The CyanogenMod Project
+# Copyright (C) 2013 The MoKee OpenSource Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 ifeq ($(TARGET_DEVICE),edison)
 
 DEVICE_PATH := $(call my-dir)
-LOCAL_PATH := $(DEVICE_PATH)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := fstab.mapphone_umts
@@ -25,6 +24,20 @@ LOCAL_SRC_FILES    := fstab.mapphone_umts
 LOCAL_MODULE_PATH  := $(TARGET_ROOT_OUT)
 include $(BUILD_PREBUILT)
 
-include $(call first-makefiles-under,$(DEVICE_PATH))
+include $(CLEAR_VARS)
+LOCAL_MODULE       := init.mapphone_cdma.rc
+LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES    := init.mapphone.rc
+LOCAL_MODULE_PATH  := $(TARGET_ROOT_OUT)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE       := init.mapphone_umts.rc
+LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES    := init.mapphone.rc
+LOCAL_MODULE_PATH  := $(TARGET_ROOT_OUT)
+include $(BUILD_PREBUILT)
 
 endif
