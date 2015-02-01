@@ -53,8 +53,6 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_FOLDER)/media_profiles.xml:system/etc/media_profiles.xml \
     $(DEVICE_FOLDER)/prebuilt/usr/keylayout/cy8c201xx.kl:system/usr/keylayout/cy8c201xx.kl
 
-PRODUCT_PACKAGES += fstab.mapphone_umts
-
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 $(call inherit-product-if-exists, vendor/motorola/edison/edison-vendor.mk)
 $(call inherit-product, vendor/motorola/omap4-common/omap4-common-imgtec-vendor-blobs.mk)
